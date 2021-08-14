@@ -9,13 +9,7 @@ import { styles } from './styles';
 import { theme } from '../../global/styles/theme';
 import PlayerSvg from '../../assets/player.svg';
 import CalendarSvg from '../../assets/calendar.svg';
-
-export type GuildType = {
-  id: string;
-  owner: boolean;
-  name: string;
-  icon: null;
-};
+import { GuildType } from '../Guild';
 
 export type AppointmentType = {
   id: string;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Text, View, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -16,6 +16,7 @@ import { ModalView } from '../../components/ModalView';
 import { Guilds } from '../Guilds';
 import { GuildType } from '../../components/Guild';
 import { useRef } from 'react';
+import { Background } from '../../components/Background';
 
 export function AppointmentCreate() {
   const textFieldDay = useRef<TextInput>(null);
@@ -38,9 +39,9 @@ export function AppointmentCreate() {
     setOpenGuildsModal(true);
   }
 
-  function handleCloseGuilds() {
+  const handleCloseGuilds = useCallback(() => {
     setOpenGuildsModal(false);
-  }
+  }, []);
 
   function handleGuildSelect(guildSelected: GuildType) {
     setGuild(guildSelected);
@@ -51,6 +52,13 @@ export function AppointmentCreate() {
     console.log({ day, mounth, minute, hour, description });
     clearInputs();
   }
+
+  const handleCategorySelect = useCallback(
+    (categoryId: string) => {
+      setCategory(categoryId);
+    },
+    [category]
+  );
 
   function clearInputs() {
     setDay('');
@@ -86,107 +94,113 @@ export function AppointmentCreate() {
       style={styles.container}
       keyboardVerticalOffset={30}
     >
-      <ScrollView>
-        <Header title="Agendar partida" />
+      <Background>
+        <ScrollView>
+          <Header title="Agendar partida" />
 
-        <Text style={[styles.label, { marginLeft: 24, marginTop: 36, marginBottom: 18 }]}>
-          Categoria
-        </Text>
+          <Text style={[styles.label, { marginLeft: 24, marginTop: 36, marginBottom: 18 }]}>
+            Categoria
+          </Text>
 
-        <View>
-          <CategorySelect hashCheckBox setCategory={setCategory} categorySelected={category} />
-        </View>
-
-        <View style={styles.form}>
-          <RectButton onPress={handleOpenGuilds}>
-            <View style={styles.select}>
-              {guild.icon ? <GuildIcon /> : <View style={styles.image} />}
-
-              <View style={styles.selectBody}>
-                <Text style={styles.label}>
-                  {guild.name ? guild.name : 'Selecione um servidor'}
-                </Text>
-              </View>
-
-              <Feather name="chevron-right" color={theme.colors.heading} size={18} />
-            </View>
-          </RectButton>
-
-          <View style={styles.field}>
-            <View>
-              <Text style={styles.label}>Dia e mês</Text>
-
-              <View style={styles.column}>
-                <SmallInput
-                  ref={textFieldDay}
-                  maxLength={2}
-                  returnKeyType="next"
-                  onSubmitEditing={() => textFieldMounth.current?.focus()}
-                  value={day}
-                  onChangeText={(value) => onChangeTextDates('textFieldDay', value)}
-                />
-
-                <Text style={styles.divider}>/</Text>
-
-                <SmallInput
-                  ref={textFieldMounth}
-                  maxLength={2}
-                  returnKeyType="next"
-                  onSubmitEditing={() => textFieldHour.current?.focus()}
-                  value={mounth}
-                  onChangeText={(value) => onChangeTextDates('textFieldMounth', value)}
-                />
-              </View>
-            </View>
-
-            <View>
-              <Text style={styles.label}>Hora e minuto</Text>
-
-              <View style={styles.column}>
-                <SmallInput
-                  ref={textFieldHour}
-                  maxLength={2}
-                  returnKeyType="next"
-                  onSubmitEditing={() => textFieldMinute.current?.focus()}
-                  value={hour}
-                  onChangeText={(value) => onChangeTextDates('textFieldHour', value)}
-                />
-
-                <Text style={styles.divider}>:</Text>
-
-                <SmallInput
-                  ref={textFieldMinute}
-                  maxLength={2}
-                  returnKeyType="done"
-                  value={minute}
-                  onChangeText={(value) => setMinute(value)}
-                />
-              </View>
-            </View>
+          <View>
+            <CategorySelect
+              hashCheckBox
+              setCategory={handleCategorySelect}
+              categorySelected={category}
+            />
           </View>
 
-          <View style={[styles.field, { marginBottom: 12 }]}>
-            <Text style={styles.label}>Descrição</Text>
-            <Text style={styles.caracteresLimit}>Max 100 caracteres</Text>
+          <View style={styles.form}>
+            <RectButton onPress={handleOpenGuilds}>
+              <View style={styles.select}>
+                {guild.icon ? <GuildIcon /> : <View style={styles.image} />}
+
+                <View style={styles.selectBody}>
+                  <Text style={styles.label}>
+                    {guild.name ? guild.name : 'Selecione um servidor'}
+                  </Text>
+                </View>
+
+                <Feather name="chevron-right" color={theme.colors.heading} size={18} />
+              </View>
+            </RectButton>
+
+            <View style={styles.field}>
+              <View>
+                <Text style={[styles.label, { marginBottom: 12 }]}>Dia e mês</Text>
+
+                <View style={styles.column}>
+                  <SmallInput
+                    ref={textFieldDay}
+                    maxLength={2}
+                    returnKeyType="next"
+                    onSubmitEditing={() => textFieldMounth.current?.focus()}
+                    value={day}
+                    onChangeText={(value) => onChangeTextDates('textFieldDay', value)}
+                  />
+
+                  <Text style={styles.divider}>/</Text>
+
+                  <SmallInput
+                    ref={textFieldMounth}
+                    maxLength={2}
+                    returnKeyType="next"
+                    onSubmitEditing={() => textFieldHour.current?.focus()}
+                    value={mounth}
+                    onChangeText={(value) => onChangeTextDates('textFieldMounth', value)}
+                  />
+                </View>
+              </View>
+
+              <View>
+                <Text style={[styles.label, { marginBottom: 12 }]}>Hora e minuto</Text>
+
+                <View style={styles.column}>
+                  <SmallInput
+                    ref={textFieldHour}
+                    maxLength={2}
+                    returnKeyType="next"
+                    onSubmitEditing={() => textFieldMinute.current?.focus()}
+                    value={hour}
+                    onChangeText={(value) => onChangeTextDates('textFieldHour', value)}
+                  />
+
+                  <Text style={styles.divider}>:</Text>
+
+                  <SmallInput
+                    ref={textFieldMinute}
+                    maxLength={2}
+                    returnKeyType="done"
+                    value={minute}
+                    onChangeText={(value) => setMinute(value)}
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View style={[styles.field, { marginBottom: 12 }]}>
+              <Text style={styles.label}>Descrição</Text>
+              <Text style={styles.caracteresLimit}>Max 100 caracteres</Text>
+            </View>
+
+            <Textarea
+              ref={textFieldDescriptopn}
+              multiline
+              maxLength={100}
+              numberOfLines={5}
+              autoCorrect
+              value={description}
+              onChangeText={(value) => setDescription(value)}
+            />
+
+            <View style={styles.footer}>
+              <Button onPress={handleSubmitForm}>Agendar</Button>
+            </View>
           </View>
+        </ScrollView>
+      </Background>
 
-          <Textarea
-            ref={textFieldDescriptopn}
-            multiline
-            maxLength={100}
-            numberOfLines={5}
-            autoCorrect
-            value={description}
-            onChangeText={(value) => setDescription(value)}
-          />
-
-          <View style={styles.footer}>
-            <Button onPress={handleSubmitForm}>Agendar</Button>
-          </View>
-        </View>
-      </ScrollView>
-
-      <ModalView visible={openGuildsModal} onRequestClose={handleCloseGuilds} statusBarTranslucent>
+      <ModalView visible={openGuildsModal} closeModal={handleCloseGuilds}>
         <Guilds handleGuildSelected={handleGuildSelect} />
       </ModalView>
     </KeyboardAvoidingView>

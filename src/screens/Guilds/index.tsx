@@ -25,6 +25,36 @@ export function Guilds({ handleGuildSelected }: GuildsProps) {
       icon: null,
       owner: true,
     },
+    {
+      id: '3',
+      name: 'Lendários',
+      icon: null,
+      owner: true,
+    },
+    {
+      id: '4',
+      name: 'Lendários',
+      icon: null,
+      owner: true,
+    },
+    {
+      id: '5',
+      name: 'Lendários',
+      icon: null,
+      owner: true,
+    },
+    {
+      id: '6',
+      name: 'Lendários',
+      icon: null,
+      owner: true,
+    },
+    {
+      id: '7',
+      name: 'Lendários',
+      icon: null,
+      owner: true,
+    },
   ];
 
   return (
@@ -33,9 +63,11 @@ export function Guilds({ handleGuildSelected }: GuildsProps) {
         data={guilds}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <Guild data={item} onPress={() => handleGuildSelected(item)} />}
-        ItemSeparatorComponent={() => <ListDivider />}
+        ListHeaderComponent={() => <ListDivider isCentered />}
+        ItemSeparatorComponent={() => <ListDivider isCentered />}
         showsVerticalScrollIndicator={false}
         style={styles.guilds}
+        contentContainerStyle={{ paddingBottom: 68, paddingTop: 104 }}
       />
     </View>
   );
