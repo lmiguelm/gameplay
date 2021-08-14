@@ -8,9 +8,14 @@ import { styles } from './styles';
 type CategorySelecteTypeProps = {
   categorySelected: string;
   setCategory: (categoryId: string) => void;
+  hashCheckBox?: boolean;
 };
 
-export function CategorySelect({ categorySelected, setCategory }: CategorySelecteTypeProps) {
+export function CategorySelect({
+  categorySelected,
+  setCategory,
+  hashCheckBox = false,
+}: CategorySelecteTypeProps) {
   return (
     <ScrollView
       horizontal
@@ -20,6 +25,7 @@ export function CategorySelect({ categorySelected, setCategory }: CategorySelect
     >
       {categories.map((category) => (
         <Category
+          hashCheckBox={hashCheckBox}
           key={category.id}
           title={category.title}
           icon={category.icon}
