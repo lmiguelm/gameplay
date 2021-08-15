@@ -10,7 +10,7 @@ type ButtonProps = RectButtonProps & {
 
 export function Button({ children, ...props }: ButtonProps) {
   return (
-    <RectButton {...props} style={styles.container}>
+    <RectButton {...props} style={[styles.container, props.style]}>
       <Text style={styles.title}>{children}</Text>
     </RectButton>
   );

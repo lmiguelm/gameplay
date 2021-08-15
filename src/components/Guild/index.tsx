@@ -22,7 +22,7 @@ type GuildProps = TouchableOpacityProps & {
 export function Guild({ data, ...props }: GuildProps) {
   return (
     <TouchableOpacity {...props} style={styles.container} activeOpacity={0.7}>
-      <GuildIcon />
+      <GuildIcon guildId={data.id} iconId={data.icon} />
 
       <View style={styles.content}>
         <View>

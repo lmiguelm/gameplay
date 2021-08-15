@@ -1,6 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { Text, View, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { RectButton } from 'react-native-gesture-handler';
+import uuid from 'react-native-uuid';
 
 import { CategorySelect } from '../../components/CategorySelect';
 import { Header } from '../../components/Header';
@@ -11,14 +15,16 @@ import { Button } from '../../components/Button';
 
 import { styles } from './styles';
 import { theme } from '../../global/styles/theme';
-import { RectButton } from 'react-native-gesture-handler';
+
 import { ModalView } from '../../components/ModalView';
 import { Guilds } from '../Guilds';
 import { GuildType } from '../../components/Guild';
-import { useRef } from 'react';
 import { Background } from '../../components/Background';
+import { COLLECTION_APPOINTMENTS } from '../../config/database';
 
 export function AppointmentCreate() {
+  const { navigate } = useNavigation();
+
   const textFieldDay = useRef<TextInput>(null);
   const textFieldMounth = useRef<TextInput>(null);
   const textFieldHour = useRef<TextInput>(null);
@@ -30,10 +36,27 @@ export function AppointmentCreate() {
   const [hour, setHour] = useState<string>('');
   const [minute, setMinute] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-
   const [category, setCategory] = useState<string>('');
+
   const [openGuildsModal, setOpenGuildsModal] = useState<boolean>(false);
+  const [enabledButton, setEnabledButton] = useState<boolean>(false);
   const [guild, setGuild] = useState<GuildType>({} as GuildType);
+
+  useEffect(() => {
+    if (
+      day.trim().length !== 0 &&
+      hour.trim().length !== 0 &&
+      mounth.trim().length !== 0 &&
+      minute.trim().length !== 0 &&
+      category.trim().length !== 0 &&
+      description.trim().length !== 0 &&
+      guild.id.trim().length !== 0
+    ) {
+      setEnabledButton(true);
+    } else {
+      setEnabledButton(false);
+    }
+  }, [day, mounth, hour, minute, description, category, guild]);
 
   function handleOpenGuilds() {
     setOpenGuildsModal(true);
@@ -48,9 +71,26 @@ export function AppointmentCreate() {
     setOpenGuildsModal(false);
   }
 
-  function handleSubmitForm() {
-    console.log({ day, mounth, minute, hour, description });
+  async function handleSubmitForm() {
+    const appointment = {
+      id: uuid.v4(),
+      date: `${day}/${mounth} às ${hour}:${minute}hrs`,
+      description,
+      category,
+      guild,
+    };
+
+    const storage = await AsyncStorage.getItem(COLLECTION_APPOINTMENTS);
+
+    const appointments = storage ? JSON.parse(storage) : [];
+
+    await AsyncStorage.setItem(
+      COLLECTION_APPOINTMENTS,
+      JSON.stringify([...appointments, appointment])
+    );
+
     clearInputs();
+    navigate('Home');
   }
 
   const handleCategorySelect = useCallback(
@@ -66,6 +106,7 @@ export function AppointmentCreate() {
     setHour('');
     setMinute('');
     setDescription('');
+    setCategory('');
   }
 
   function onChangeTextDates(
@@ -113,7 +154,11 @@ export function AppointmentCreate() {
           <View style={styles.form}>
             <RectButton onPress={handleOpenGuilds}>
               <View style={styles.select}>
-                {guild.icon ? <GuildIcon /> : <View style={styles.image} />}
+                {guild.icon ? (
+                  <GuildIcon guildId={guild.id} iconId={guild.icon} />
+                ) : (
+                  <View style={styles.image} />
+                )}
 
                 <View style={styles.selectBody}>
                   <Text style={styles.label}>
@@ -194,7 +239,13 @@ export function AppointmentCreate() {
             />
 
             <View style={styles.footer}>
-              <Button onPress={handleSubmitForm}>Agendar</Button>
+              <Button
+                enabled={enabledButton}
+                style={!enabledButton ? { opacity: 0.5 } : {}}
+                onPress={handleSubmitForm}
+              >
+                Agendar
+              </Button>
             </View>
           </View>
         </ScrollView>
