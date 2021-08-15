@@ -103,21 +103,24 @@ export function AppointmentCreate() {
   }
 
   function onChangeTextDates(
-    field: 'textFieldDay' | 'textFieldMounth' | 'textFieldHour',
+    field: 'textFieldDay' | 'textFieldMounth' | 'textFieldHour' | 'textFieldMinute',
     value: string
   ) {
     switch (field) {
       case 'textFieldDay':
-        setDay(value);
+        setDay(Number(value) > 31 ? '31 ' : value);
         value.length === 2 && textFieldMounth.current?.focus();
         break;
       case 'textFieldMounth':
-        setMounth(value);
+        setMounth(Number(value) > 12 ? '12 ' : value);
         value.length === 2 && textFieldHour.current?.focus();
         break;
       case 'textFieldHour':
-        setHour(value);
+        setHour(Number(value) > 23 ? '23 ' : value);
         value.length === 2 && textFieldMinute.current?.focus();
+        break;
+      case 'textFieldMinute':
+        setMinute(Number(value) > 59 ? '59 ' : value);
         break;
     }
   }
@@ -210,7 +213,7 @@ export function AppointmentCreate() {
                     maxLength={2}
                     returnKeyType="done"
                     value={minute}
-                    onChangeText={(value) => setMinute(value)}
+                    onChangeText={(value) => onChangeTextDates('textFieldMinute', value)}
                   />
                 </View>
               </View>
