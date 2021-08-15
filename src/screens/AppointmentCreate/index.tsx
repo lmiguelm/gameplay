@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { Text, View, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { RectButton } from 'react-native-gesture-handler';
@@ -20,10 +19,11 @@ import { ModalView } from '../../components/ModalView';
 import { Guilds } from '../Guilds';
 import { GuildType } from '../../components/Guild';
 import { Background } from '../../components/Background';
-import { COLLECTION_APPOINTMENTS } from '../../config/database';
+import { useAppointment } from '../../hooks/useAppointment';
 
 export function AppointmentCreate() {
   const { navigate } = useNavigation();
+  const { saveAppointment } = useAppointment();
 
   const textFieldDay = useRef<TextInput>(null);
   const textFieldMounth = useRef<TextInput>(null);
@@ -73,21 +73,14 @@ export function AppointmentCreate() {
 
   async function handleSubmitForm() {
     const appointment = {
-      id: uuid.v4(),
+      id: String(uuid.v4()),
       date: `${day}/${mounth} às ${hour}:${minute}hrs`,
       description,
       category,
       guild,
     };
 
-    const storage = await AsyncStorage.getItem(COLLECTION_APPOINTMENTS);
-
-    const appointments = storage ? JSON.parse(storage) : [];
-
-    await AsyncStorage.setItem(
-      COLLECTION_APPOINTMENTS,
-      JSON.stringify([...appointments, appointment])
-    );
+    await saveAppointment(appointment);
 
     clearInputs();
     navigate('Home');

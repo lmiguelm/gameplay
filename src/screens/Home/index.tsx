@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 
 import { Appointment, AppointmentType } from '../../components/Appointment';
@@ -10,49 +10,38 @@ import { Profile } from '../../components/Profile';
 import { Background } from '../../components/Background';
 
 import { styles } from './styles';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 import { Empty } from '../../components/Empty';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLLECTION_APPOINTMENTS } from '../../config/database';
 import { theme } from '../../global/styles/theme';
 import { ModalView } from '../../components/ModalView';
-import { Signout } from '../Signout';
 import { ApppointmentRemove } from '../AppointmentRemove';
+import { useAppointment } from '../../hooks/useAppointment';
 
 export function Home() {
+  const { loading, appointments, fetchAppointments } = useAppointment();
+
   const { navigate } = useNavigation();
 
   const [category, setCategory] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
   const [showAppointmentRemove, setShowAppointmentRemove] = useState<boolean>(false);
   const [appointmentIdSeleted, setAppointmentIdSelected] = useState<string | undefined>(undefined);
-  const [appointments, setAppointments] = useState<AppointmentType[]>([]);
+  const [filteredAppointments, setFilteredAppointments] = useState<AppointmentType[]>([]);
 
-  useFocusEffect(
-    useCallback(() => {
-      loadAppointments();
-    }, [category])
-  );
+  useEffect(() => {
+    setFilteredAppointments(appointments);
+  }, [appointments]);
 
-  async function loadAppointments() {
-    setLoading(true);
-    const storage = await AsyncStorage.getItem(COLLECTION_APPOINTMENTS);
-
-    const appointments = storage
-      ? (JSON.parse(storage) as AppointmentType[])
-      : ([] as AppointmentType[]);
-
+  useEffect(() => {
     if (category === '') {
-      setAppointments(appointments);
-    } else {
-      setAppointments(
-        appointments.filter((appointment) => Number(appointment.category) === Number(category))
-      );
+      setFilteredAppointments(appointments);
+      return;
     }
 
-    setLoading(false);
-  }
+    setFilteredAppointments(
+      appointments.filter((appointment) => appointment.category === category)
+    );
+  }, [category]);
 
   const handleCategorySelect = useCallback(
     (categoryId: string) => {
@@ -76,7 +65,6 @@ export function Home() {
 
   const hideModal = useCallback(() => {
     setShowAppointmentRemove(false);
-    loadAppointments();
   }, []);
 
   return (
@@ -100,7 +88,7 @@ export function Home() {
         <ActivityIndicator size="large" color={theme.colors.primary} style={{ flex: 1 }} />
       ) : (
         <FlatList
-          data={appointments}
+          data={filteredAppointments}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <Appointment
@@ -127,7 +115,7 @@ export function Home() {
               size={24}
               colors={[theme.colors.primary]}
               refreshing={false}
-              onRefresh={loadAppointments}
+              onRefresh={fetchAppointments}
             />
           }
         />

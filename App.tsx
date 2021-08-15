@@ -11,6 +11,7 @@ import { Background } from './src/components/Background';
 
 import { Routes } from './src/routes';
 import { AuthProvider } from './src/contexts/AuthContext';
+import { AppointmentProvider } from './src/contexts/AppointmentContext';
 
 LogBox.ignoreLogs(['You are not currently signed in to Expo on your development machine.']);
 
@@ -30,7 +31,9 @@ export default function App() {
     <Background>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
       <AuthProvider>
-        <Routes />
+        <AppointmentProvider>
+          <Routes />
+        </AppointmentProvider>
       </AuthProvider>
     </Background>
   );

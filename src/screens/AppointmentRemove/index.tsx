@@ -1,9 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { AppointmentType } from '../../components/Appointment';
-import { COLLECTION_APPOINTMENTS } from '../../config/database';
 import { theme } from '../../global/styles/theme';
+import { useAppointment } from '../../hooks/useAppointment';
 
 import { styles } from './styles';
 
@@ -13,13 +11,10 @@ type ApppointmentRemoveProps = {
 };
 
 export function ApppointmentRemove({ id, closeModal }: ApppointmentRemoveProps) {
+  const { removeAppointment } = useAppointment();
+
   async function handleRemoveAppointment() {
-    const store = await AsyncStorage.getItem(COLLECTION_APPOINTMENTS);
-    const appointments = store
-      ? (JSON.parse(store) as AppointmentType[])
-      : ([] as AppointmentType[]);
-    const newArrayOfAppointments = appointments.filter((appointment) => appointment.id !== id);
-    await AsyncStorage.setItem(COLLECTION_APPOINTMENTS, JSON.stringify(newArrayOfAppointments));
+    await removeAppointment(id);
     closeModal();
   }
 
