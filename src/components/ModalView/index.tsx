@@ -21,7 +21,7 @@ export function ModalView({ children, closeModal, ...rest }: ModalViewProps) {
     >
       <TouchableWithoutFeedback onPress={closeModal}>
         <View style={styles.overlay}>
-          <View style={styles.container}>
+          <View style={[styles.container, rest.style]}>
             <Background>
               <View style={styles.bar} />
               {children}
