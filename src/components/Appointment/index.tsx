@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { RectButton, RectButtonProps } from 'react-native-gesture-handler';
+import { LongPressGestureHandler, RectButton, RectButtonProps } from 'react-native-gesture-handler';
 import { categories } from '../../utils/categories';
 
 import { GuildIcon } from '../GuildIcon';
@@ -21,40 +21,43 @@ export type AppointmentType = {
 
 type AppointmentTypeProps = RectButtonProps & {
   data: AppointmentType;
+  onLongPress: () => void;
 };
 
-export function Appointment({ data, ...rest }: AppointmentTypeProps) {
+export function Appointment({ onLongPress, data, ...rest }: AppointmentTypeProps) {
   const [category] = categories.filter((item) => item.id === data.category);
   const { owner, name } = data.guild;
   const { primary, on } = theme.colors;
 
   return (
-    <RectButton {...rest}>
-      <View style={styles.container}>
-        <GuildIcon iconId={data.guild.icon} guildId={data.guild.id} />
+    <LongPressGestureHandler onActivated={onLongPress}>
+      <RectButton {...rest}>
+        <View style={styles.container}>
+          <GuildIcon iconId={data.guild.icon} guildId={data.guild.id} />
 
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text style={styles.text}>{name}</Text>
-            <Text style={styles.category}>{category.title}</Text>
-          </View>
-
-          <View style={styles.footer}>
-            <View style={styles.dateInfo}>
-              <CalendarSvg />
-              <Text style={styles.date}>{data.date}</Text>
+          <View style={styles.content}>
+            <View style={styles.header}>
+              <Text style={styles.text}>{name}</Text>
+              <Text style={styles.category}>{category.title}</Text>
             </View>
 
-            <View style={styles.playersInfo}>
-              <PlayerSvg fill={owner ? primary : on} />
+            <View style={styles.footer}>
+              <View style={styles.dateInfo}>
+                <CalendarSvg />
+                <Text style={styles.date}>{data.date}</Text>
+              </View>
 
-              <Text style={[styles.player, { color: owner ? primary : on }]}>
-                {owner ? 'Anfitrião' : 'Visitante'}
-              </Text>
+              <View style={styles.playersInfo}>
+                <PlayerSvg fill={owner ? primary : on} />
+
+                <Text style={[styles.player, { color: owner ? primary : on }]}>
+                  {owner ? 'Anfitrião' : 'Visitante'}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
-      </View>
-    </RectButton>
+      </RectButton>
+    </LongPressGestureHandler>
   );
 }

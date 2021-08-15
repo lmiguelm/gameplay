@@ -225,7 +225,11 @@ export function AppointmentCreate() {
 
             <View style={[styles.field, { marginBottom: 12 }]}>
               <Text style={styles.label}>Descrição</Text>
-              <Text style={styles.caracteresLimit}>Max 100 caracteres</Text>
+              <Text style={styles.caracteresLimit}>
+                {description.trim().length === 0
+                  ? 'Max 100 caracteres'
+                  : `${100 - description.length} caracteres restantes`}
+              </Text>
             </View>
 
             <Textarea

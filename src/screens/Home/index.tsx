@@ -16,13 +16,17 @@ import { Empty } from '../../components/Empty';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLLECTION_APPOINTMENTS } from '../../config/database';
 import { theme } from '../../global/styles/theme';
+import { ModalView } from '../../components/ModalView';
+import { Signout } from '../Signout';
+import { ApppointmentRemove } from '../AppointmentRemove';
 
 export function Home() {
   const { navigate } = useNavigation();
 
   const [category, setCategory] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [showAppointmentRemove, setShowAppointmentRemove] = useState<boolean>(false);
+  const [appointmentIdSeleted, setAppointmentIdSelected] = useState<string | undefined>(undefined);
   const [appointments, setAppointments] = useState<AppointmentType[]>([]);
 
   useFocusEffect(
@@ -65,6 +69,16 @@ export function Home() {
     navigate('AppointmentCreate');
   }
 
+  const onLongPress = useCallback((id: string) => {
+    setShowAppointmentRemove(true);
+    setAppointmentIdSelected(id);
+  }, []);
+
+  const hideModal = useCallback(() => {
+    setShowAppointmentRemove(false);
+    loadAppointments();
+  }, []);
+
   return (
     <Background>
       <View style={styles.header}>
@@ -89,7 +103,11 @@ export function Home() {
           data={appointments}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <Appointment onPress={() => handleAppointmentDetails(item)} data={item} />
+            <Appointment
+              onPress={() => handleAppointmentDetails(item)}
+              onLongPress={() => onLongPress(item.id)}
+              data={item}
+            />
           )}
           ItemSeparatorComponent={() => <ListDivider />}
           showsVerticalScrollIndicator={false}
@@ -114,6 +132,19 @@ export function Home() {
           }
         />
       )}
+
+      <ModalView
+        visible={showAppointmentRemove}
+        closeModal={hideModal}
+        style={{
+          height: 200,
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+        }}
+      >
+        <ApppointmentRemove id={appointmentIdSeleted} closeModal={hideModal} />
+      </ModalView>
     </Background>
   );
 }
