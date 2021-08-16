@@ -1,4 +1,4 @@
-# 💬 Gameplay
+# 🎮 Gameplay
 
 Projeto desenvolvido durante a Next Level Week #6 da Rocketseat.
 
@@ -10,7 +10,7 @@ Projeto desenvolvido durante a Next Level Week #6 da Rocketseat.
 
 ## 🎥 Video de demosntração
 
-![Gameplay](.github/gameplay.mp4)
+![Gameplay](.github/gameplay.gif)
 
 <br>
 
