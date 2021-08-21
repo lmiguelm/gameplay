@@ -1,6 +1,8 @@
 {
   "expo": {
     "name": "gameplay",
+    "privacy": "public",
+    "description": "Agende todas suas gameplays em apenas um lugar!",
     "slug": "gameplay",
     "version": "1.0.0",
     "orientation": "portrait",

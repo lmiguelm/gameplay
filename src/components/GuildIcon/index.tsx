@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image } from 'react-native';
-import { CDN_IMAGE } from '../../config';
+import { CDN_IMAGE } from '@env';
 
 import { styles } from './styles';
 

@@ -20,7 +20,6 @@ import { useAppointment } from '../../hooks/useAppointment';
 
 export function Home() {
   const { loading, appointments, fetchAppointments } = useAppointment();
-
   const { navigate } = useNavigation();
 
   const [category, setCategory] = useState<string>('');

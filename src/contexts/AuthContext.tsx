@@ -1,10 +1,10 @@
-import React, { createContext, ReactNode, useState } from 'react';
+import React, { createContext, ReactNode, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AuthSession from 'expo-auth-session';
 import { api } from '../services/api';
-import { CDN_IMAGE, CLIENT_ID, REDIREC_URI, RESPONSE_TYPE, SCOPE } from '../config';
 import { COLLECTION_USERS } from '../config/database';
-import { useEffect } from 'react';
+
+import { REDIREC_URI, CDN_IMAGE, CLIENT_ID, RESPONSE_TYPE, SCOPE } from '@env';
 
 type UserType = {
   id: string;
