@@ -8,6 +8,12 @@ Projeto desenvolvido durante a Next Level Week #6 da Rocketseat.
 
 <br>
 
+## 🟢 Experimente agora
+
+Disponível [aqui](https://expo.dev/@lmiguelm/gameplay).
+
+<br>
+
 ## 🎥 Video de demosntração
 
 ![Gameplay](.github/gameplay.gif)
